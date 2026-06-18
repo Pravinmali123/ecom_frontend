@@ -1,266 +1,425 @@
+
 import { Formik, Form, Field } from "formik";
 
 import axios from "axios";
 
 import {
-  useNavigate,
-  useLocation
-} from "react-router-dom";
+useNavigate,
+useLocation
+}
+from "react-router-dom";
 
-import { useRazorpay }
+import {
+useRazorpay
+}
 from "react-razorpay";
 
-const Buy = () => {
+const Buy = ()=>{
 
-  const location = useLocation();
+const location =
+useLocation();
 
-  const navigate = useNavigate();
+const navigate =
+useNavigate();
 
-  const { error, isLoading, Razorpay }
-    = useRazorpay();
+const {
+error,
+isLoading,
+Razorpay
+}
+=
+useRazorpay();
 
-  const products = location.state || [];
+const products =
+location.state
+|| [];
 
-  const totalPrice = products.reduce(
-    (total, item) =>
-      total + item.price * item.quantity,
-    0
-  );
+const totalPrice =
+products.reduce(
 
-  const ini = {
+(total,item)=>
 
-    name: "",
+total+
+item.price*
+item.quantity,
 
-    email: "",
+0
 
-    mo_no: "",
+);
 
-    address: ""
+const ini = {
 
-  };
+name:"",
+email:"",
+mo_no:"",
+address:""
 
-  // MAIN SUBMIT
-  const handlesubmit = async (
-    values,
-    { resetForm }
-  ) => {
+};
 
-    try {
+const handlesubmit =
+async(
 
-      const options = {
+values,
 
-        key: "rzp_test_S5iwtFr5Ws0PGC",
+{
 
-        amount: totalPrice * 100,
+resetForm
 
-        currency: "INR",
+}
 
-        name: "ecommerce web",
+)=>{
 
-        description: "Order Payment",
+try{
 
-        handler: async function (response) {
+const options = {
 
-          console.log(response);
+key:
+"rzp_test_S5iwtFr5Ws0PGC",
 
-          // FINAL ORDER DATA
-          const finalData = {
+amount:
+totalPrice*100,
 
-            payment_id:
-              response.razorpay_payment_id,
+currency:
+"INR",
 
-            name: values.name,
+name:
+"ecommerce web",
 
-            email: values.email,
+description:
+"Order Payment",
 
-            mo_no: values.mo_no,
+handler:
+async(
+response
+)=>{
 
-            address: values.address,
+try{
 
-            total_price: totalPrice,
+const token =
+localStorage.getItem(
+"token"
+);
 
-            delivery_status:
-              "Processing",
+if(!token){
 
-            products:
-              products.map((item) => ({
+navigate(
+"/login"
+);
 
-                productid: item._id,
+return;
 
-                product_name:
-                  item.product_name,
+}
 
-                quantity:
-                  item.quantity,
+const finalData = {
 
-                price:
-                  item.price
+payment_id:
+response
+.razorpay_payment_id,
 
-              }))
+name:
+values.name,
 
-          };
+email:
+values.email,
 
-          // SAVE ORDER
-          const res = await axios.post(
-            "https://ecom-backend-4mkw.onrender.com/order/postorder",
-            finalData
-          );
+mo_no:
+values.mo_no,
 
-          console.log(res.data);
+address:
+values.address,
 
-          alert("Payment Successful");
+total_price:
+totalPrice,
 
-          resetForm();
+delivery_status:
+"Processing",
 
-          navigate("/order");
+products:
 
-        },
+products.map(
+(item)=>({
 
-        theme: {
-          color: "#F37254",
-        },
+productid:
+item._id,
 
-      };
+product_name:
+item.product_name,
 
-      const razorpayInstance =
-        new Razorpay(options);
+quantity:
+item.quantity,
 
-      razorpayInstance.open();
+price:
+item.price
 
-    } catch (error) {
+})
 
-      console.log(error);
+)
 
-    }
-  };
+};
 
-  return (
+const res =
+await axios.post(
 
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-5">
+"https://ecom-backend-4mkw.onrender.com/order/postorder",
 
-      <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-lg">
+finalData,
 
-        <h2 className="text-3xl font-bold text-center mb-5">
+{
 
-          Buy Details
+headers:{
 
-        </h2>
+authorization:
+token
 
-        {
-          products.map((item) => (
+}
 
-            <div
-              key={item._id}
-              className="border rounded-lg p-3 mb-4"
-            >
+}
 
-              <div className="mt-3">
+);
 
-                <h1 className="text-2xl font-bold text-black">
+console.log(
+res.data
+);
 
-                  {item.product_name}
+alert(
+"Payment Successful"
+);
 
-                </h1>
+resetForm();
 
-                <p className="text-gray-500 mt-1">
+navigate(
+"/order"
+);
 
-                  Quantity :
-                  {item.quantity}
+}
 
-                </p>
+catch(error){
 
-                <h2 className="text-pink-500 text-2xl font-bold mt-2">
+console.log(
+error
+);
 
-                  ₹ {item.price}
+alert(
+"Order Save Failed"
+);
 
-                </h2>
+}
 
-              </div>
+},
 
-            </div>
-          ))
-        }
+theme:{
 
-        <div className="text-center mb-5">
+color:
+"#ec4899"
 
-          <h1 className="text-3xl font-bold text-green-600">
+}
 
-            Total : ₹ {totalPrice}
+};
 
-          </h1>
+const razorpay =
 
-        </div>
+new Razorpay(
+options
+);
 
-        <Formik
-          initialValues={ini}
-          onSubmit={handlesubmit}
-        >
+razorpay.open();
 
-          <Form className="flex flex-col gap-4">
+}
 
-            <Field
-              name="name"
-              placeholder="Enter Name"
-              className="border p-3 rounded"
-              required
-            />
+catch(error){
 
-            <Field
-              name="email"
-              type="email"
-              placeholder="Enter Email"
-              className="border p-3 rounded"
-              required
-            />
+console.log(
+error
+);
 
-            <Field
-              name="mo_no"
-              placeholder="Enter Mobile Number"
-              className="border p-3 rounded"
-              required
-            />
+}
 
-            <Field
-              name="address"
-              as="textarea"
-              placeholder="Enter Address"
-              className="border p-3 rounded"
-              required
-            />
+};
 
-            <div>
+return(
 
-              {
-                isLoading
-              }
+<div className="min-h-screen bg-gray-100 flex justify-center items-center p-5">
 
-              {
-                error &&
-                <p>
-                  Error :
-                  {error}
-                </p>
-              }
+<div className="w-full max-w-xl bg-white p-6 rounded-3xl shadow-lg">
 
-              <button
-                type="submit"
-                className="bg-pink-500 text-white p-3 rounded-lg text-lg font-bold"
-              >
+<h1 className="text-4xl font-bold text-center mb-6">
 
-                Pay Now
+Buy Details
 
-              </button>
+</h1>
 
-            </div>
+{
 
-          </Form>
+products.map(
+(item)=>(
 
-        </Formik>
+<div
 
-      </div>
+key={
+item._id
+}
 
-    </div>
-  );
+className="border rounded-xl p-4 mb-4"
+
+>
+
+<h2
+className="text-2xl font-bold"
+>
+
+{
+item.product_name
+}
+
+</h2>
+
+<p>
+
+Qty :
+{
+item.quantity
+}
+
+</p>
+
+<p
+className="text-pink-600 text-2xl font-bold"
+>
+
+₹
+{
+item.price
+}
+
+</p>
+
+</div>
+
+)
+
+)
+
+}
+
+<h1
+className="text-center text-3xl font-bold text-green-600 mb-5"
+>
+
+Total :
+
+₹
+{
+totalPrice
+}
+
+</h1>
+
+<Formik
+
+initialValues={
+ini
+}
+
+onSubmit={
+handlesubmit
+}
+
+>
+
+<Form
+className="flex flex-col gap-4"
+>
+
+<Field
+
+name="name"
+
+placeholder="Name"
+
+className="border p-3 rounded-xl"
+
+/>
+
+<Field
+
+name="email"
+
+placeholder="Email"
+
+className="border p-3 rounded-xl"
+
+/>
+
+<Field
+
+name="mo_no"
+
+placeholder="Mobile"
+
+className="border p-3 rounded-xl"
+
+/>
+
+<Field
+
+name="address"
+
+as="textarea"
+
+placeholder="Address"
+
+className="border p-3 rounded-xl"
+
+/>
+
+{
+
+error &&
+
+<p>
+
+{
+error
+}
+
+</p>
+
+}
+
+<button
+
+type="submit"
+
+className="bg-pink-500 hover:bg-pink-600 text-white p-4 rounded-xl"
+
+>
+
+{
+
+isLoading
+
+?
+
+"Loading..."
+
+:
+
+"Pay Now"
+
+}
+
+</button>
+
+</Form>
+
+</Formik>
+
+</div>
+
+</div>
+
+);
+
 };
 
 export default Buy;
