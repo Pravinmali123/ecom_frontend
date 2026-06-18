@@ -1,3 +1,4 @@
+
 import React, {
   useEffect,
   useState
@@ -5,189 +6,389 @@ import React, {
 
 import axios from "axios";
 
+import {
+  useNavigate
+} from "react-router-dom";
+
 import Layout from "../Components/Layout.";
 
 const Order = () => {
 
-  const [orders, setOrders] =
-    useState([]);
+const [orders,setOrders] =
+useState([]);
 
-  // GET ORDER DATA
-  const getorder = async () => {
+const navigate =
+useNavigate();
 
-    try {
+const getorder =
+async()=>{
 
-      const res = await axios.get(
-        "https://ecom-backend-4mkw.onrender.com/order"
-      );
+try{
 
-      console.log(res.data);
+const token =
+localStorage.getItem(
+"token"
+);
 
-      setOrders(res.data.data);
+if(!token){
 
-    } catch (error) {
+navigate(
+"/login");
 
-      console.log(error);
+return;
 
-    }
-  };
+}
 
-  useEffect(() => {
+const res =
+await axios.get(
 
-    getorder();
+"https://ecom-backend-4mkw.onrender.com/order",
 
-  }, []);
+{
 
-  return (
+headers:{
 
-    <Layout>
+authorization:
+token
 
-      <div className="p-5">
+}
 
-        <h1 className="text-4xl font-bold text-center mb-10">
+}
 
-          My Orders
+);
 
-        </h1>
+setOrders(
+res.data.data
+);
 
-        {
-          orders.length === 0 ? (
+}
 
-            <h1 className="text-center text-2xl">
+catch(error){
 
-              No Orders Found
+console.log(
+error
+);
 
-            </h1>
+if(
+error.response?.status===401
+){
 
-          ) : (
+navigate(
+"/login"
+);
 
-            orders.map((item, index) => (
+}
 
-              <div
-                key={index}
-                className="border rounded-xl shadow-lg p-5 mb-8 bg-white"
-              >
+}
 
-                {/* ORDER DETAILS */}
+};
 
-                <div className="mb-5">
+useEffect(()=>{
 
-                  <h2 className="text-xl font-bold text-green-600">
+getorder();
 
-                    Payment ID :
-                    {item.payment_id}
+},[]);
 
-                  </h2>
+return(
 
-                  <h2 className="text-lg mt-2">
+<Layout>
 
-                    Name :
-                    {item.name}
+<div className="min-h-screen bg-gray-100 p-4 md:p-8">
 
-                  </h2>
+<h1
+className="text-3xl md:text-5xl font-bold text-center mb-10"
+>
 
-                  <h2 className="text-lg mt-2">
+My Orders
 
-                    Email :
-                    {item.email}
+</h1>
 
-                  </h2>
+{
 
-                  <h2 className="text-lg mt-2">
+orders.length===0
 
-                    Mobile :
-                    {item.mo_no}
+?
 
-                  </h2>
+(
 
-                  <h2 className="text-lg mt-2">
+<div
+className="text-center mt-20"
+>
 
-                    Address :
-                    {item.address}
+<h1
+className="text-2xl md:text-4xl text-gray-500 font-bold"
+>
 
-                  </h2>
+No Orders Found
 
-                  <h2 className="text-lg mt-2 font-bold text-pink-600">
+</h1>
 
-                    Total Price :
-                    ₹ {item.total_price}
+</div>
 
-                  </h2>
+)
 
-                  <h2 className="text-lg mt-2">
+:
 
-                    Delivery Status :
+(
 
-                    <span className="text-blue-600 font-bold">
+<div
+className="max-w-7xl mx-auto space-y-8"
+>
 
-                      {" "}
-                      {item.delivery_status}
+{
 
-                    </span>
+orders.map(
+(item,index)=>(
 
-                  </h2>
+<div
 
-                </div>
+key={index}
 
-                <hr className="mb-5" />
+className="bg-white rounded-3xl shadow-lg p-5"
 
-                {/* PRODUCTS */}
+>
 
-                <h1 className="text-2xl font-bold mb-5">
+<div
+className="grid grid-cols-1 md:grid-cols-2 gap-5"
+>
 
-                  Products
+<div>
 
-                </h1>
+<h2 className="font-bold">
 
-                {
-                  item.products.map((p, i) => (
+Payment ID
 
-                    <div
-                      key={i}
-                      className="border rounded-lg p-4 mb-4"
-                    >
+</h2>
 
-                      <h2 className="text-xl font-bold">
+<p>
 
-                        Product Name :
-                        {p.product_name}
+{
+item.payment_id
+}
 
-                      </h2>
+</p>
 
-                      <h2 className="mt-2">
+</div>
 
-                        Product ID :
-                        {p.productid}
+<div>
 
-                      </h2>
+<h2 className="font-bold">
 
-                      <h2 className="mt-2">
+Delivery Status
 
-                        Quantity :
-                        {p.quantity}
+</h2>
 
-                      </h2>
+<span
+className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full"
+>
 
-                      <h2 className="mt-2 text-pink-600 font-bold">
+{
+item.delivery_status
+}
 
-                        Price :
-                        ₹ {p.price}
+</span>
 
-                      </h2>
+</div>
 
-                    </div>
-                  ))
-                }
+<div>
 
-              </div>
-            ))
-          )
-        }
+<h2 className="font-bold">
 
-      </div>
+Name
 
-    </Layout>
-  );
+</h2>
+
+<p>
+
+{
+item.name
+}
+
+</p>
+
+</div>
+
+<div>
+
+<h2 className="font-bold">
+
+Email
+
+</h2>
+
+<p
+className="break-all"
+>
+
+{
+item.email
+}
+
+</p>
+
+</div>
+
+<div>
+
+<h2 className="font-bold">
+
+Mobile
+
+</h2>
+
+<p>
+
+{
+item.mo_no
+}
+
+</p>
+
+</div>
+
+<div>
+
+<h2 className="font-bold">
+
+Total Price
+
+</h2>
+
+<p
+className="text-pink-600 text-2xl font-bold"
+>
+
+₹
+{
+item.total_price
+}
+
+</p>
+
+</div>
+
+</div>
+
+<div
+className="mt-5"
+>
+
+<h2
+className="font-bold"
+>
+
+Address
+
+</h2>
+
+<p>
+
+{
+item.address
+}
+
+</p>
+
+</div>
+
+<hr
+className="my-6"
+/>
+
+<h1
+className="text-2xl font-bold mb-5"
+>
+
+Products
+
+</h1>
+
+<div
+className="grid grid-cols-1 md:grid-cols-2 gap-5"
+>
+
+{
+
+item.products?.map(
+(p,i)=>(
+
+<div
+
+key={i}
+
+className="border rounded-2xl p-5"
+
+>
+
+<h2
+className="text-xl font-bold"
+>
+
+{
+p.product_name
+}
+
+</h2>
+
+<p>
+
+Product ID :
+{
+p.productid
+}
+
+</p>
+
+<p>
+
+Quantity :
+{
+p.quantity
+}
+
+</p>
+
+<p
+className="text-pink-600 text-xl font-bold"
+>
+
+₹
+{
+p.price
+}
+
+</p>
+
+</div>
+
+)
+
+)
+
+}
+
+</div>
+
+</div>
+
+)
+
+)
+
+}
+
+</div>
+
+)
+
+}
+
+</div>
+
+</Layout>
+
+);
+
 };
 
 export default Order;

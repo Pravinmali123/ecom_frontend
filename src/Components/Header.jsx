@@ -205,22 +205,22 @@ alt="logo"
 className="h-10"
 />
 
-<ul className="hidden md:flex gap-10">
+<ul  className="hidden md:flex gap-10 items-center font-medium">
 
 <li>
-<Link to="/">
+<Link to="/"  className="hover:text-pink-600">
 Home
 </Link>
 </li>
 
 <li>
-<Link to="/order">
+<Link to="/order"  className="hover:text-pink-600">
 Order
 </Link>
 </li>
 
 <li>
-<Link to="/cart">
+<Link to="/cart" className="hover:text-pink-600">
 Cart
 </Link>
 </li>
@@ -245,7 +245,7 @@ e.target.value
 
 }}
 
-className="w-full border px-3 py-2"
+className="w-full border rounded-l-lg px-3 py-1 outline-none focus:ring-2 focus:ring-pink-400"
 
 />
 
@@ -259,7 +259,7 @@ input
 
 }}
 
-className="bg-pink-500 text-white px-4"
+ className="bg-pink-600 text-white px-4 rounded-r-lg hover:bg-pink-700"
 
 >
 
@@ -285,7 +285,7 @@ onClick={
 handlelogout
 }
 
-className="bg-pink-500 text-white px-4 py-2"
+ className="bg-pink-600 text-white px-4 py-1 rounded hover:bg-pink-700"
 
 >
 
@@ -303,7 +303,7 @@ Logout
 
 to="/login"
 
-className="bg-pink-500 text-white px-4 py-2"
+ className="bg-pink-600 text-white px-4 py-1 rounded hover:bg-pink-700"
 
 >
 
@@ -317,13 +317,13 @@ Login
 
 <Link
 to="/cart"
-className="relative"
+className="relative text-xl"
 >
 
 🛒
 
 <span
-className="absolute -top-2 -right-3 bg-green-500 text-white px-2 rounded-full"
+ className="absolute -top-2 -right-3 bg-green-500 text-white text-xs px-2 rounded-full"
 >
 
 {
@@ -338,7 +338,7 @@ cartCount
 
 <button
 
-className="md:hidden"
+className="md:hidden text-2xl"
 
 onClick={()=>{
 
@@ -374,33 +374,24 @@ open && (
 
 <div className="md:hidden px-6 py-4">
 
-<Link
-to="/"
->
+     <div className="flex mb-4">
+          <input
+            type="text"
+            placeholder="Search..."
+            className="w-full border px-3 py-1 rounded-l"
+          />
+          <button className="bg-blue-600 text-white px-3 rounded-r">
+            Go
+          </button>
+        </div>
 
-Home
-
-</Link>
-
-<br/>
-
-<Link
-to="/order"
->
-
-Order
-
-</Link>
-
-<br/>
-
-<Link
-to="/cart"
->
-
-Cart
-
-</Link>
+        <div className="flex flex-col gap-3 font-medium">
+          <Link to="/" onClick={() => setOpen(false)}>Home</Link>
+          {/* <Link to="/product" onClick={() => setOpen(false)}>Product</Link> */}
+          <Link to="/order" onClick={() => setOpen(false)}>Order</Link>
+          <Link to="/cart" onClick={() => setOpen(false)}>Cart</Link>
+          <Link to="/login" onClick={() => setOpen(false)}>Login</Link>
+        </div>
 
 </div>
 
