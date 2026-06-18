@@ -14,10 +14,21 @@ const Header = () => {
   const token = localStorage.getItem("token")
   const navigate = useNavigate()
 
-  const handlelogout = () => {
-    localStorage.removeItem("token")
-    navigate("/")
-  }
+ const handlelogout = ()=>{
+
+localStorage.removeItem(
+"token"
+);
+
+localStorage.removeItem(
+"user"
+);
+
+setCartCount(0);
+
+navigate("/");
+
+}
 
   const [cartCount, setCartCount] = useState(0);
   // const [products, setProducts] = useState([]);
@@ -30,32 +41,83 @@ const Header = () => {
 
   const getCartCount = async () => {
 
-    try {
+try {
 
-      const res = await axios.get(
-        "https://ecom-backend-4mkw.onrender.com/cart"
-      );
+const token =
+localStorage.getItem(
+"token"
+);
 
-      const totalItems = res.data.data.reduce(
-        (total, item) => total + item.quantity,
-        0
-      );
+if(!token){
 
-      setCartCount(totalItems);
+setCartCount(0);
 
-    } catch (error) {
+return;
 
-      console.log(error);
+}
 
-    }
+const res =
+await axios.get(
 
-  };
+"https://ecom-backend-4mkw.onrender.com/cart",
 
-  useEffect(() => {
+{
 
-    getCartCount();
+headers:{
 
-  }, []);
+authorization:
+token
+
+}
+
+}
+
+);
+
+const totalItems =
+res.data.data.reduce(
+
+(total,item)=>
+
+total+
+item.quantity,
+
+0
+
+);
+
+setCartCount(
+totalItems
+);
+
+}
+
+catch(error){
+
+console.log(
+error
+);
+
+setCartCount(0);
+
+}
+
+};
+useEffect(()=>{
+
+if(token){
+
+getCartCount();
+
+}
+
+else{
+
+setCartCount(0);
+
+}
+
+},[token]);
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
