@@ -16,26 +16,69 @@ const { search, selectedCategory } = useContext(MyContext);
 // console.log(user);
 
 
-  const addcart = async (item) => {
+const addcart = async (item) => {
 
-  try {
+try {
 
-   const res = await axios.post(
-      "https://ecom-backend-4mkw.onrender.com/cart/postcart",
-      item
-    );
-    console.log(res);
-    
-    alert("Product Added To Cart");
+const token =
+localStorage.getItem(
+"token"
+);
 
-  } catch (error) {
+if(!token){
 
-    console.log(error);
+alert(
+"Please Login First"
+);
 
-  }
+navigate(
+"/login"
+);
+
+return;
+
+}
+
+await axios.post(
+
+"https://ecom-backend-4mkw.onrender.com/cart/postcart",
+
+{
+
+...item,
+
+quantity:1
+
+},
+
+{
+
+headers:{
+
+authorization:
+token
+
+}
+
+}
+
+);
+
+alert(
+"Product Added To Cart"
+);
+
+}
+
+catch(error){
+
+console.log(
+error
+);
+
+}
 
 };
-
 
  const getProducts = async () => {
 
@@ -203,22 +246,60 @@ const { search, selectedCategory } = useContext(MyContext);
 
                 </button>
 
-                <button 
-                    onClick={() =>
-              navigate("/buy", {
-                state: [
-                  {
-                    ...item,
-                    quantity: 1
-                  }
-                ]
-              })
-            }
-                  className="w-1/2 bg-pink-500 text-white py-3 rounded-xl hover:bg-pink-600 transition duration-300 font-semibold"
-                >
+               <button
 
-                  Buy now
-                </button>
+onClick={()=>{
+
+const token =
+localStorage.getItem(
+"token"
+);
+
+if(!token){
+
+alert(
+"Please Login First"
+);
+
+navigate(
+"/login"
+);
+
+return;
+
+}
+
+navigate(
+
+"/buy",
+
+{
+
+state:[
+
+{
+
+...item,
+
+quantity:1
+
+}
+
+]
+
+}
+
+);
+
+}}
+
+className="w-1/2 bg-pink-500 text-white py-3 rounded-xl"
+
+>
+
+Buy now
+
+</button>
 
               </div>
             </div>
